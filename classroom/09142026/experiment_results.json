@@ -1,0 +1,277 @@
+{
+    "results": {
+        "SVM": {
+            "accuracy": 0.9666666666666667,
+            "precision": 0.9696969696969697,
+            "recall": 0.9666666666666667,
+            "f1": 0.9665831244778612,
+            "fit_time_ms": 2.7081966400146484,
+            "confusion_matrix": [
+                [
+                    10,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    9,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    10
+                ]
+            ]
+        },
+        "Decision Tree": {
+            "accuracy": 0.9333333333333333,
+            "precision": 0.9333333333333332,
+            "recall": 0.9333333333333332,
+            "f1": 0.9333333333333332,
+            "fit_time_ms": 2.2287368774414062,
+            "confusion_matrix": [
+                [
+                    10,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    9,
+                    1
+                ],
+                [
+                    0,
+                    1,
+                    9
+                ]
+            ]
+        },
+        "Naive Bayes": {
+            "accuracy": 0.9666666666666667,
+            "precision": 0.9696969696969697,
+            "recall": 0.9666666666666667,
+            "f1": 0.9665831244778612,
+            "fit_time_ms": 1.293182373046875,
+            "confusion_matrix": [
+                [
+                    10,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    9,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    10
+                ]
+            ]
+        },
+        "KNN": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "fit_time_ms": 1.104593276977539,
+            "confusion_matrix": [
+                [
+                    10,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    10,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    10
+                ]
+            ]
+        }
+    },
+    "detailed_reports": {
+        "SVM": {
+            "setosa": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 10.0
+            },
+            "versicolor": {
+                "precision": 1.0,
+                "recall": 0.9,
+                "f1-score": 0.9473684210526315,
+                "support": 10.0
+            },
+            "virginica": {
+                "precision": 0.9090909090909091,
+                "recall": 1.0,
+                "f1-score": 0.9523809523809523,
+                "support": 10.0
+            },
+            "accuracy": 0.9666666666666667,
+            "macro avg": {
+                "precision": 0.9696969696969697,
+                "recall": 0.9666666666666667,
+                "f1-score": 0.9665831244778612,
+                "support": 30.0
+            },
+            "weighted avg": {
+                "precision": 0.9696969696969696,
+                "recall": 0.9666666666666667,
+                "f1-score": 0.9665831244778613,
+                "support": 30.0
+            }
+        },
+        "Decision Tree": {
+            "setosa": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 10.0
+            },
+            "versicolor": {
+                "precision": 0.9,
+                "recall": 0.9,
+                "f1-score": 0.9,
+                "support": 10.0
+            },
+            "virginica": {
+                "precision": 0.9,
+                "recall": 0.9,
+                "f1-score": 0.9,
+                "support": 10.0
+            },
+            "accuracy": 0.9333333333333333,
+            "macro avg": {
+                "precision": 0.9333333333333332,
+                "recall": 0.9333333333333332,
+                "f1-score": 0.9333333333333332,
+                "support": 30.0
+            },
+            "weighted avg": {
+                "precision": 0.9333333333333333,
+                "recall": 0.9333333333333333,
+                "f1-score": 0.9333333333333333,
+                "support": 30.0
+            }
+        },
+        "Naive Bayes": {
+            "setosa": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 10.0
+            },
+            "versicolor": {
+                "precision": 1.0,
+                "recall": 0.9,
+                "f1-score": 0.9473684210526315,
+                "support": 10.0
+            },
+            "virginica": {
+                "precision": 0.9090909090909091,
+                "recall": 1.0,
+                "f1-score": 0.9523809523809523,
+                "support": 10.0
+            },
+            "accuracy": 0.9666666666666667,
+            "macro avg": {
+                "precision": 0.9696969696969697,
+                "recall": 0.9666666666666667,
+                "f1-score": 0.9665831244778612,
+                "support": 30.0
+            },
+            "weighted avg": {
+                "precision": 0.9696969696969696,
+                "recall": 0.9666666666666667,
+                "f1-score": 0.9665831244778613,
+                "support": 30.0
+            }
+        },
+        "KNN": {
+            "setosa": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 10.0
+            },
+            "versicolor": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 10.0
+            },
+            "virginica": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 10.0
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 30.0
+            },
+            "weighted avg": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 30.0
+            }
+        }
+    },
+    "optimization": {
+        "SVM": {
+            "best_params": {
+                "C": "0.1",
+                "gamma": "1",
+                "kernel": "linear"
+            },
+            "cv_best_score": 0.9833333333333334,
+            "test_accuracy_before": 0.9666666666666667,
+            "test_accuracy_after": 0.9666666666666667,
+            "test_f1_after": 0.9665831244778612
+        },
+        "Decision Tree": {
+            "best_params": {
+                "criterion": "gini",
+                "max_depth": "4",
+                "min_samples_split": "2"
+            },
+            "cv_best_score": 0.9416666666666668,
+            "test_accuracy_before": 0.9333333333333333,
+            "test_accuracy_after": 0.9333333333333333,
+            "test_f1_after": 0.9333333333333332
+        },
+        "Naive Bayes": {
+            "best_params": {
+                "var_smoothing": "0.012742749857031341"
+            },
+            "cv_best_score": 0.9583333333333334,
+            "test_accuracy_before": 0.9666666666666667,
+            "test_accuracy_after": 0.9666666666666667,
+            "test_f1_after": 0.9665831244778612
+        },
+        "KNN": {
+            "best_params": {
+                "n_neighbors": "6",
+                "weights": "uniform"
+            },
+            "cv_best_score": 0.9833333333333334,
+            "test_accuracy_before": 1.0,
+            "test_accuracy_after": 0.9666666666666667,
+            "test_f1_after": 0.9665831244778613
+        }
+    }
+}

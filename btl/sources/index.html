@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô Phỏng Thuật Toán Tìm Đường Mê Cung: BFS, DFS, A*</title>
+    <meta name="description" content="Chương trình mô phỏng so sánh thuật toán tìm kiếm đường đi trong mê cung BFS, DFS và A* chạy song song. Bài tập lớn môn Trí Tuệ Nhân Tạo.">
+    <link rel="stylesheet" href="style.css?v=4.0">
+    <!-- Chart.js CDN để vẽ biểu đồ hiệu năng -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- CONTROL DOCK / TOOLBAR -->
+    <section class="control-dock">
+        <!-- Khối điều khiển chạy mô phỏng -->
+        <div class="dock-group">
+            <span class="dock-label">Điều khiển:</span>
+            <button id="btnPlay" class="btn btn-primary" title="Phím tắt: Space">
+                <span id="btnPlayText">Chạy song song</span>
+            </button>
+            <button id="btnStep" class="btn btn-secondary" title="Duyệt từng bước một">
+                Từng bước
+            </button>
+            <button id="btnInstant" class="btn btn-secondary" title="Giải tức thì và đo thời gian thực thi">
+                Giải tức thì
+            </button>
+            <button id="btnReset" class="btn btn-danger" title="Đặt lại trạng thái tìm kiếm (Phím tắt: R)">
+                Đặt lại
+            </button>
+        </div>
+
+        <!-- Khối đổi bản đồ & Mẫu mê cung -->
+        <div class="dock-group">
+            <span class="dock-label">Bản đồ mẫu:</span>
+            <select id="selectMapPreset" class="select-input">
+                <option value="backtracker">Mê cung hoàn hảo (DFS Maze)</option>
+                <option value="prims">Mê cung phân nhánh (Prim's)</option>
+                <option value="spiral">Mê cung xoắn ốc (Spiral)</option>
+                <option value="rooms">Các phòng & Hành lang (Rooms)</option>
+                <option value="obstacles">Bãi vật cản ngẫu nhiên (Open Field)</option>
+                <option value="nopath">Bẫy không lối thoát (No-Path)</option>
+            </select>
+            <button id="btnGenRandom" class="btn btn-secondary" title="Sinh bản đồ ngẫu nhiên mới">
+                Tạo mới
+            </button>
+        </div>
+
+        <!-- Khối đổi tỉ lệ bàn cờ -->
+        <div class="dock-group">
+            <span class="dock-label">Kích thước:</span>
+            <select id="selectGridSize" class="select-input">
+                <option value="15" selected>15 × 15 (Mặc định)</option>
+                <option value="21">21 × 21 (Vừa)</option>
+                <option value="31">31 × 31 (Lớn)</option>
+                <option value="41">41 × 41 (Khổng lồ)</option>
+            </select>
+        </div>
+
+        <!-- Tốc độ chạy & Heuristic -->
+        <div class="dock-group">
+            <span class="dock-label">Tốc độ:</span>
+            <div class="slider-wrapper">
+                <input id="sliderSpeed" type="range" class="range-slider" min="1" max="100" value="50">
+                <span id="valSpeed" class="slider-val">50x</span>
+            </div>
+
+            <span class="dock-label">Heuristic (A*):</span>
+            <select id="selectHeuristic" class="select-input">
+                <option value="manhattan" selected>Manhattan (Chuẩn 4 hướng)</option>
+                <option value="euclidean">Euclidean (Đường chim bay)</option>
+            </select>
+
+            <a href="slide.html" class="btn btn-secondary" style="text-decoration: none; margin-left: 6px;" title="Mở bộ Slide báo cáo thuyết trình đề tài">
+                Slide thuyết trình
+            </a>
+        </div>
+    </section>
+
+    <!-- MAIN SIMULATION WORKSPACE (3 PARALLEL MAZES) -->
+    <main class="main-container">
+        <!-- Chú giải phân biệt -->
+        <div class="legend-dock">
+            <div class="legend-item"><span class="legend-color start"></span> <strong>S</strong>: Điểm xuất phát</div>
+            <div class="legend-item"><span class="legend-color goal"></span> <strong>G</strong>: Điểm đích</div>
+            <div class="legend-item"><span class="legend-color wall"></span> <strong>Tường</strong>: Vật cản</div>
+            <div class="legend-item"><span class="legend-color visited-bfs"></span> BFS: Đã duyệt</div>
+            <div class="legend-item"><span class="legend-color visited-dfs"></span> DFS: Đã duyệt</div>
+            <div class="legend-item"><span class="legend-color visited-astar"></span> A*: Đã duyệt</div>
+            <div class="legend-item"><span class="legend-color path-line"></span> <strong>Đường đi</strong>: Tự động vẽ khi tới đích</div>
+        </div>
+
+        <!-- Lưới 3 thuật toán song song -->
+        <div class="sim-grid">
+            <!-- 1. BFS Visualizer Card -->
+            <div class="algo-card bfs">
+                <div class="card-header">
+                    <div class="algo-identity">
+                        <div>
+                            <h2 class="algo-name">1. THUẬT TOÁN BFS</h2>
+                            <p class="algo-desc">Tìm kiếm theo chiều rộng • Hàng đợi FIFO Queue</p>
+                        </div>
+                    </div>
+                    <div id="statusBFS" class="status-pill">Sẵn sàng</div>
+                </div>
+
+                <div class="canvas-wrapper">
+                    <canvas id="canvasBFS"></canvas>
+                </div>
+
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Thời gian</span>
+                        <span id="statTimeBFS" class="stat-value">0.00 ms</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Ô đã duyệt</span>
+                        <span id="statVisitedBFS" class="stat-value">0 ô</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Độ dài đường</span>
+                        <span id="statPathBFS" class="stat-value">0 bước</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Bộ nhớ đỉnh</span>
+                        <span id="statMemoryBFS" class="stat-value">0 nút</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. DFS Visualizer Card -->
+            <div class="algo-card dfs">
+                <div class="card-header">
+                    <div class="algo-identity">
+                        <div>
+                            <h2 class="algo-name">2. THUẬT TOÁN DFS</h2>
+                            <p class="algo-desc">Tìm kiếm theo chiều sâu • Ngăn xếp LIFO Stack</p>
+                        </div>
+                    </div>
+                    <div id="statusDFS" class="status-pill">Sẵn sàng</div>
+                </div>
+
+                <div class="canvas-wrapper">
+                    <canvas id="canvasDFS"></canvas>
+                </div>
+
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Thời gian</span>
+                        <span id="statTimeDFS" class="stat-value">0.00 ms</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Ô đã duyệt</span>
+                        <span id="statVisitedDFS" class="stat-value">0 ô</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Độ dài đường</span>
+                        <span id="statPathDFS" class="stat-value">0 bước</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Bộ nhớ đỉnh</span>
+                        <span id="statMemoryDFS" class="stat-value">0 nút</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. A* Visualizer Card -->
+            <div class="algo-card astar">
+                <div class="card-header">
+                    <div class="algo-identity">
+                        <div>
+                            <h2 class="algo-name">3. THUẬT TOÁN A*</h2>
+                            <p class="algo-desc">Tìm kiếm Heuristic • f(n) = g(n) + h(n)</p>
+                        </div>
+                    </div>
+                    <div id="statusAStar" class="status-pill">Sẵn sàng</div>
+                </div>
+
+                <div class="canvas-wrapper">
+                    <canvas id="canvasAStar"></canvas>
+                </div>
+
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Thời gian</span>
+                        <span id="statTimeAStar" class="stat-value">0.00 ms</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Ô đã duyệt</span>
+                        <span id="statVisitedAStar" class="stat-value">0 ô</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Độ dài đường</span>
+                        <span id="statPathAStar" class="stat-value">0 bước</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Bộ nhớ đỉnh</span>
+                        <span id="statMemoryAStar" class="stat-value">0 nút</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BẢNG SO SÁNH & BIỂU ĐỒ HIỆU NĂNG THỰC NGHIỆM -->
+        <section class="comparison-section">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <h3 class="section-title">BẢNG SO SÁNH HIỆU NĂNG THỰC NGHIỆM</h3>
+                    <p class="section-desc">Đối sánh trực tiếp số ô duyệt, độ dài đường đi, bộ nhớ và thời gian thực thi theo thời gian thực</p>
+                </div>
+            </div>
+
+            <!-- Bảng số liệu chi tiết -->
+            <div class="comparison-table-wrapper">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Thuật toán</th>
+                            <th>Trạng thái</th>
+                            <th>Thời gian (ms)</th>
+                            <th>Số ô đã duyệt</th>
+                            <th>Tỉ lệ khám phá</th>
+                            <th>Độ dài đường đi</th>
+                            <th>Bộ nhớ đỉnh (Queue/Stack)</th>
+                            <th>Tính tối ưu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableMetricsBody">
+                        <tr>
+                            <td style="color: var(--bfs-color); font-weight: 600;">BFS (Chiều rộng)</td>
+                            <td><span class="status-pill">Sẵn sàng</span></td>
+                            <td>0.00 ms</td>
+                            <td>0 ô</td>
+                            <td>0.0%</td>
+                            <td>0 bước</td>
+                            <td>0 nút</td>
+                            <td><span class="badge-optimal">Tối ưu ngắn nhất</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--dfs-color); font-weight: 600;">DFS (Chiều sâu)</td>
+                            <td><span class="status-pill">Sẵn sàng</span></td>
+                            <td>0.00 ms</td>
+                            <td>0 ô</td>
+                            <td>0.0%</td>
+                            <td>0 bước</td>
+                            <td>0 nút</td>
+                            <td><span class="badge-suboptimal">Không tối ưu</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--astar-color); font-weight: 600;">A* (Heuristic)</td>
+                            <td><span class="status-pill">Sẵn sàng</span></td>
+                            <td>0.00 ms</td>
+                            <td>0 ô</td>
+                            <td>0.0%</td>
+                            <td>0 bước</td>
+                            <td>0 nút</td>
+                            <td><span class="badge-optimal">Tối ưu ngắn nhất</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 3 Biểu đồ trực quan so sánh -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <span class="chart-title">Số ô đã duyệt (Nút)</span>
+                    <div class="chart-canvas-container">
+                        <canvas id="chartVisited"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <span class="chart-title">Độ dài đường đi (Bước)</span>
+                    <div class="chart-canvas-container">
+                        <canvas id="chartPathLength"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <span class="chart-title">Thời gian thực thi (ms)</span>
+                    <div class="chart-canvas-container">
+                        <canvas id="chartTime"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Thông Báo -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Nạp mã nguồn điều khiển chính (chống cache trình duyệt) -->
+    <script type="module" src="js/app.js?v=4.0"></script>
+</body>
+</html>
