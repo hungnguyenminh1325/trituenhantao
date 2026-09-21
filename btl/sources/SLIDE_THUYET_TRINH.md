@@ -146,3 +146,11 @@
 * **Câu 10: Làm thế nào để thuật toán nhận biết bài toán Vô nghiệm (No Path)?**
   * Trong mỗi bước `step()`, trước khi lấy phần tử, code kiểm tra xem tập chờ có rỗng hay không (`queue.length === 0` hoặc `openHeap.isEmpty()`).
   * Nếu tập chờ đã rỗng mà chưa chạm tới đích $\implies$ đã duyệt hết toàn bộ vùng thông nhau, gán `status = 'no_path'`, dừng an toàn và thông báo lên giao diện.
+
+* **Câu 11: Tùy chọn 'Manhattan (Chuẩn 4 hướng)' và 'Euclidean (Đường chim bay)' trên giao diện có ý nghĩa gì?**
+  * **Bản chất:** Đây là tùy chọn **hàm Heuristic $h(n)$** dùng cho thuật toán A* để ước lượng khoảng cách tới đích:
+    * **Manhattan:** $h(n) = |r - r_g| + |c - c_g|$ (code: `return dr + dc;`), chuẩn cho chuyển động 4 hướng dạng bàn cờ.
+    * **Euclidean:** $h(n) = \sqrt{(r - r_g)^2 + (c - c_g)^2}$ (code: `return Math.sqrt(dr*dr + dc*dc);`), là khoảng cách đường thẳng hình học.
+  * **Tính tối ưu:** Cả 2 đều thỏa mãn tính **chấp nhận được (Admissible)** ($h(n) \le h^*(n)$) $\implies$ A* luôn đảm bảo tìm ra đường đi ngắn nhất tối ưu với cả 2 hàm.
+  * **Tại sao Manhattan duyệt ít ô hơn Euclidean trên lưới 4 hướng?** Do chỉ được đi 4 hướng, khoảng cách thực tế tối thiểu là Manhattan. Euclidean luôn ngắn hơn Manhattan ($h_{\text{Euclidean}} \le h_{\text{Manhattan}}$), tức là ước lượng quá thấp so với thực tế, khiến chùm tia tìm kiếm bị tản mát và duyệt thêm nhiều ô lân cận hơn.
+  * **Khi nào dùng Euclidean trong thực tế?** Khi bài toán cho phép **di chuyển 8 hướng (đi chéo)** hoặc di chuyển tự do trong không gian thực (máy bay không người lái Drone, robot xoay bánh đa hướng).
